@@ -6,8 +6,8 @@ docker-compose v3
 
 ### Install
 
-`make generate_key`
+```
+make generate_key
+make run
 
-copy generated key to `.env` file like `SENTRY_SECRET_KEY=<generated key>`
-
-`make run`
+```
