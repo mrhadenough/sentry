@@ -10,3 +10,5 @@ docker-compose v3
 make generate_key
 make run
 ```
+
+go to http://localhost:9000
