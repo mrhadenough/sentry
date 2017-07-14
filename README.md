@@ -9,5 +9,4 @@ docker-compose v3
 ```
 make generate_key
 make run
-
 ```
