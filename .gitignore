@@ -1,2 +1,6 @@
 .env
 data/
+Makefile.settings
+.DS_Store
+server/ansible/site.retry
+server/ansible/server

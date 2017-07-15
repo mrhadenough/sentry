@@ -1,0 +1,52 @@
+- stat: path=/root/sentry/.env
+  register: check_env_file
+
+- name: Generate secret key
+  shell: docker run --rm sentry:8 config generate-secret-key
+  args:
+    chdir: /root/sentry/
+  register: secret_key
+  run_once: true
+  when: check_env_file.stat.exists == False
+
+- name: Write secret key to env
+  shell: echo SENTRY_SECRET_KEY={{ secret_key.stdout | quote }} > .env
+  args:
+    chdir: /root/sentry
+  run_once: true
+  when: check_env_file.stat.exists == False
+
+- name: Stop compose
+  docker_service:
+    project_name: sentry
+    project_src: /root/sentry
+    state: absent
+
+- name: Upgrade sentry
+  shell: docker-compose run sentry sentry upgrade --noinput
+  args:
+    chdir: /root/sentry
+  run_once: true
+  register: output
+
+- name: Run compose
+  docker_service:
+    project_name: sentry
+    project_src: /root/sentry
+    state: present
+  register: output
+
+- name: Print output
+  debug:
+   var: output
+
+- name: Create sentry user
+  shell: docker-compose run sentry createuser --email {{ sentry_user_email }} --password {{ sentry_user_password }} --superuser
+  args:
+    chdir: /root/sentry
+  ignore_errors: yes
+  register: output
+
+- name: Print output
+  debug:
+   var: output

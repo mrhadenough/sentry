@@ -1,0 +1,6 @@
+[server]
+root@127.0.0.1
+
+[server:vars]
+server_host=127.0.0.1
+server_domain=

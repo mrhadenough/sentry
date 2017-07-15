@@ -1,0 +1,26 @@
+server {
+    listen 80;
+    {% if not server_domain %}
+        server_name {{ server_host }} default_server;
+    {% else %}
+        server_name {{ server_domain }};
+    {% endif %}
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    client_max_body_size 250M;
+    proxy_connect_timeout       600;
+    proxy_send_timeout          600;
+    proxy_read_timeout          600;
+    send_timeout                600;
+
+    location / {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        include uwsgi_params;
+
+        proxy_pass http://127.0.0.1:8000;
+    }
+}

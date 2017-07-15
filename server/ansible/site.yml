@@ -1,0 +1,5 @@
+- hosts: all
+  remote_user: root
+  become_user: sudo
+  roles:
+    - app

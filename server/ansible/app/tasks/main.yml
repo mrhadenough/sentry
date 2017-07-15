@@ -1,0 +1,48 @@
+- user: name=celery groups=ubuntu,docker
+  notify: restart docker
+
+- name: ensure repository key is installed
+  apt_key:
+    id: "58118E89F3A912897C070ADBF76221572C52609D"
+    keyserver: "hkp://p80.pool.sks-keyservers.net:80"
+    state: present
+
+- name: Add Docker repository and update apt cache
+  apt_repository:
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-xenial main"
+    mode: '644'
+    update_cache: yes
+    state: present
+
+- name: install libraries
+  apt: package={{ item }}  update_cache=yes
+  with_items:
+    - docker-engine
+    - docker-compose
+    - nginx
+
+- service: name=docker state=restarted
+
+- name: Create sentry folder
+  file: path=/root/sentry state=directory owner=ubuntu group=ubuntu
+
+- name: copy docker compose
+  template: src=docker-compose.yml dest=/root/sentry/docker-compose.yml
+
+- name: Nginx config
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-enabled/sentry.conf
+  notify: restart nginx
+
+- name: Disable the default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- stat: path=/root/sentry/.env
+  register: check_swap_file
+
+- include: swap.yml
+  when: check_swap_file.stat.exists == False
+
+- include: sentry.yml
