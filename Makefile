@@ -1,8 +1,3 @@
-SENTRY_USER_EMAIL=
-SENTRY_USER_PASSWORD=
-
-include Makefile.settings
-
 run:
 	docker-compose -f server/ansible/app/templates/docker-compose.yml up -d
 	docker-compose -f server/ansible/app/templates/docker-compose.yml run sentry sentry upgrade
@@ -22,5 +17,4 @@ ansible:
 	ansible-playbook \
 	-i server/ansible/server \
 	server/ansible/site.yml \
-	-u root \
-	--extra-vars "sentry_user_email=${SENTRY_USER_EMAIL} sentry_user_password=${SENTRY_USER_PASSWORD}"
+	-u root

@@ -1,8 +1,9 @@
 server {
-    listen 80;
+
     {% if not server_domain %}
-        server_name {{ server_host }} default_server;
+        listen 80 default_server;
     {% else %}
+        listen 80;
         server_name {{ server_domain }};
     {% endif %}
 
@@ -21,6 +22,6 @@ server {
         proxy_redirect off;
         include uwsgi_params;
 
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:{{ sentry_port }};
     }
 }

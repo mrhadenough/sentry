@@ -23,11 +23,13 @@
     state: absent
 
 - name: Upgrade sentry
-  shell: docker-compose run sentry sentry upgrade --noinput
+  shell: docker-compose run --rm sentry sentry upgrade --noinput
   args:
     chdir: /root/sentry
   run_once: true
   register: output
+
+- debug: msg="{{ output.stdout.split('\n') }}"
 
 - name: Run compose
   docker_service:
@@ -36,17 +38,16 @@
     state: present
   register: output
 
-- name: Print output
-  debug:
-   var: output
+- name: Check runned containers
+  command: docker-compose ps
+  args:
+    chdir: /root/sentry
+  register: output
+
+- debug: msg="{{ output.stdout.split('\n') }}"
 
 - name: Create sentry user
   shell: docker-compose run sentry createuser --email {{ sentry_user_email }} --password {{ sentry_user_password }} --superuser
   args:
     chdir: /root/sentry
   ignore_errors: yes
-  register: output
-
-- name: Print output
-  debug:
-   var: output

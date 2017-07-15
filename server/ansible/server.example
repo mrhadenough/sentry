@@ -4,3 +4,7 @@ root@127.0.0.1
 [server:vars]
 server_host=127.0.0.1
 server_domain=
+sentry_port=9000
+sentry_user_email=
+sentry_user_password=
+

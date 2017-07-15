@@ -1,13 +1,2 @@
 - name: restart nginx
   service: name=nginx state=restarted
-
-- name: restart supervisor
-  service: name=supervisor state=restarted
-
-- name: restart docker
-  service: name=docker state=restarted
-  when: docker_service_state != 'stopped'
-
-# - name: restart compose
-#   service: name=docker state=restarted
-#   when: docker_service_state != 'stopped'
