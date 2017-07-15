@@ -20,8 +20,10 @@ go to http://localhost:9000
 cp server/ansible/server{.example,}
 ```
 
-Set server address and domain in `server/ansible/server` file
+Set variables in `server/ansible/server` file
 
 ```
 make ansible
 ```
+
+Done
