@@ -2,11 +2,10 @@
 
 ## Requirements
 
-docker-compose v3
+- docker-compose v2 (for local)
+- ansible (for remote)
 
-## Install
-
-Local install
+### Local install
 
 ```
 make generate_key
