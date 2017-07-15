@@ -1,4 +1,4 @@
-# Sentry from docker-compose
+# Sentry
 
 ## Requirements
 
@@ -14,7 +14,7 @@ make run
 
 go to http://localhost:9000
 
-### Remote instal
+### Remote install
 
 ```
 cp server/ansible/server{.example,}
