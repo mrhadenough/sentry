@@ -20,6 +20,7 @@
     - docker-engine
     - docker-compose
     - nginx
+    - python-passlib
 
 - service: name=docker state=restarted
 
@@ -27,7 +28,15 @@
   file: path=/root/sentry state=directory owner=ubuntu group=ubuntu
 
 - name: copy docker compose
-  template: src=docker-compose.yml dest=/root/sentry/docker-compose.yml
+  template: src=docker-compose.yml.j2 dest=/root/sentry/docker-compose.yml
+
+- htpasswd:
+    path: /etc/nginx/.htpasswd
+    name: "{{ nginx_user }}"
+    password: "{{ nginx_password }}"
+    owner: root
+    group: www-data
+    mode: 0640
 
 - name: Nginx config
   template: src=nginx.conf.j2 dest=/etc/nginx/sites-enabled/sentry.conf

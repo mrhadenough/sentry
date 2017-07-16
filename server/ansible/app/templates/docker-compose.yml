@@ -22,9 +22,12 @@ services:
       SENTRY_DB_USER: postgres
       SENTRY_DB_PASSWORD: postgres
       SENTRY_REDIS_HOST: redis
+      SENTRY_EMAIL_HOST: mailserver
+      SENTRY_SERVER_EMAIL: postmaster@sentry.com
     links:
      - redis
      - postgres
+     - mailserver
     ports:
      - 127.0.0.1:9000:9000
     stdin_open: true
@@ -35,6 +38,7 @@ services:
     depends_on:
      - redis
      - postgres
+     - mailserver
     command: "sentry run cron"
     environment:
       SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
@@ -42,12 +46,15 @@ services:
       SENTRY_DB_USER: postgres
       SENTRY_DB_PASSWORD: postgres
       SENTRY_REDIS_HOST: redis
+      SENTRY_EMAIL_HOST: mailserver
+      SENTRY_SERVER_EMAIL: postmaster@sentry.com
 
   sentry_celery_worker:
     image: sentry:8
     depends_on:
      - redis
      - postgres
+     - mailserver
     command: "sentry run worker"
     environment:
       SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
@@ -55,3 +62,8 @@ services:
       SENTRY_DB_USER: postgres
       SENTRY_DB_PASSWORD: postgres
       SENTRY_REDIS_HOST: redis
+      SENTRY_EMAIL_HOST: mailserver
+      SENTRY_SERVER_EMAIL: postmaster@sentry.com
+
+  mailserver:
+    image: namshi/smtp

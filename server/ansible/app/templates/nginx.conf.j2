@@ -1,5 +1,4 @@
 server {
-
     {% if not server_domain %}
         listen 80 default_server;
     {% else %}
@@ -22,6 +21,10 @@ server {
         proxy_redirect off;
         include uwsgi_params;
 
-        proxy_pass http://127.0.0.1:{{ sentry_port }};
+        proxy_pass http://127.0.0.1:{{ sentry_port }}/;
+
+        access_log /var/log/nginx/sentry_access.log;
+        error_log /var/log/nginx/sentry_error.log;
+
     }
 }

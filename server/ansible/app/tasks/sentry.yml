@@ -46,8 +46,15 @@
 
 - debug: msg="{{ output.stdout.split('\n') }}"
 
+- name: Check if user exists
+  shell: docker exec -i sentry_postgres_1 psql -U postgres -c "select email from auth_user where email = '{{ sentry_user_email }}'"
+  register: create_email
+
+- debug: msg="{{ create_email.stdout | quote }}"
+
 - name: Create sentry user
   shell: docker-compose run sentry createuser --email {{ sentry_user_email }} --password {{ sentry_user_password }} --superuser
   args:
     chdir: /root/sentry
   ignore_errors: yes
+  when: create_email.stdout_lines[-1] != '(1 row)'

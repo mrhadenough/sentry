@@ -20,7 +20,7 @@ go to http://localhost:9000
 cp server/ansible/server{.example,}
 ```
 
-Set variables in `server/ansible/server` file
+Set variables in the `server/ansible/server` file
 
 ```
 make ansible
