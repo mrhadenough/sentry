@@ -1,5 +1,11 @@
 - hosts: all
-  remote_user: root
+  become_user: root
+  gather_facts: no
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+
+- hosts: server
   become_user: sudo
   roles:
     - app

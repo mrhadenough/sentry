@@ -1,2 +1,5 @@
 - name: restart nginx
   service: name=nginx state=restarted
+
+- name: restart docker
+  service: name=docker state=restarted

@@ -2,21 +2,13 @@
 
 ## Requirements
 
-- docker-compose v2 (for local)
-- ansible (for remote)
-
-### Local install
-
-```
-make generate_key
-make run
-```
-
-go to http://localhost:9000
+- pipenv
 
 ### Remote install
 
 ```
+pipenv install
+make generate_key
 cp server/ansible/server{.example,}
 ```
 

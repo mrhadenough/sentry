@@ -7,4 +7,4 @@ server_domain=
 sentry_port=9000
 sentry_user_email=
 sentry_user_password=
-
+default_email_from=

@@ -5,7 +5,7 @@ services:
     image: redis
 
   postgres:
-    image: postgres:9.4
+    image: postgres:10.4-alpine
     environment:
       - POSTGRES_USER:sentry
       - POSTGRES_PASSWORD:sentry
@@ -13,7 +13,7 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
 
   sentry:
-    image: sentry:8
+    image: sentry:9
     depends_on:
       - "postgres"
     environment:
@@ -22,8 +22,10 @@ services:
       SENTRY_DB_USER: postgres
       SENTRY_DB_PASSWORD: postgres
       SENTRY_REDIS_HOST: redis
-      SENTRY_EMAIL_HOST: mailserver
-      SENTRY_SERVER_EMAIL: postmaster@sentry.com
+      # SENTRY_EMAIL_HOST: mailserver
+      # SENTRY_SERVER_EMAIL: postmaster@sentry.com
+    env_file:
+      - .env
     links:
      - redis
      - postgres
@@ -34,7 +36,7 @@ services:
     tty: true
 
   sentry_celery_beat:
-    image: sentry:8
+    image: sentry:9
     depends_on:
      - redis
      - postgres
@@ -48,9 +50,11 @@ services:
       SENTRY_REDIS_HOST: redis
       SENTRY_EMAIL_HOST: mailserver
       SENTRY_SERVER_EMAIL: postmaster@sentry.com
+    env_file:
+      - .env
 
   sentry_celery_worker:
-    image: sentry:8
+    image: sentry:9
     depends_on:
      - redis
      - postgres
@@ -64,6 +68,8 @@ services:
       SENTRY_REDIS_HOST: redis
       SENTRY_EMAIL_HOST: mailserver
       SENTRY_SERVER_EMAIL: postmaster@sentry.com
+    env_file:
+      - .env
 
   mailserver:
     image: namshi/smtp

@@ -1,0 +1,16 @@
+- file: path=/root/certbot/ state=directory owner=root group=root
+- name: download certbot
+  get_url: url=https://dl.eff.org/certbot-auto dest=/root/certbot/certbot-auto mode="a+x"
+
+- name: stop Nginx
+  service: name=nginx state=stopped
+
+- name: generate ssl
+  command: /root/certbot/certbot-auto certonly --standalone --agree-tos --keep-until-expiring -n -d {{ server_domain }} -m {{ default_email_from }}
+
+- name: start Nginx
+  service: name=nginx state=started
+
+- name: Register cron command for renew ssl cert
+  cron: name="renew ssl cert" minute="0" hour="6" job="/root/certbot/certbot-auto renew --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start'" user=root state="present"
+

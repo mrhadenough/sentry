@@ -1,10 +1,16 @@
-- stat: path=/root/sentry/.env
+- name: Create sentry folder
+  file: path=/www/sentry state=directory owner=root group=root
+
+- name: copy docker compose
+  template: src=docker-compose.yml dest=/www/sentry/docker-compose.yml
+
+- stat: path=/www/sentry/.env
   register: check_env_file
 
 - name: Generate secret key
-  shell: docker run --rm sentry:8 config generate-secret-key
+  shell: docker run --rm sentry config generate-secret-key
   args:
-    chdir: /root/sentry/
+    chdir: /www/sentry/
   register: secret_key
   run_once: true
   when: check_env_file.stat.exists == False
@@ -12,36 +18,34 @@
 - name: Write secret key to env
   shell: echo SENTRY_SECRET_KEY={{ secret_key.stdout | quote }} > .env
   args:
-    chdir: /root/sentry
+    chdir: /www/sentry
   run_once: true
   when: check_env_file.stat.exists == False
 
 - name: Stop compose
   docker_service:
     project_name: sentry
-    project_src: /root/sentry
+    project_src: /www/sentry
     state: absent
 
 - name: Upgrade sentry
   shell: docker-compose run --rm sentry sentry upgrade --noinput
   args:
-    chdir: /root/sentry
+    chdir: /www/sentry
   run_once: true
   register: output
-
-- debug: msg="{{ output.stdout.split('\n') }}"
 
 - name: Run compose
   docker_service:
     project_name: sentry
-    project_src: /root/sentry
+    project_src: /www/sentry
     state: present
   register: output
 
 - name: Check runned containers
   command: docker-compose ps
   args:
-    chdir: /root/sentry
+    chdir: /www/sentry
   register: output
 
 - debug: msg="{{ output.stdout.split('\n') }}"
@@ -55,6 +59,6 @@
 - name: Create sentry user
   shell: docker-compose run sentry createuser --email {{ sentry_user_email }} --password {{ sentry_user_password }} --superuser
   args:
-    chdir: /root/sentry
+    chdir: /www/sentry
   ignore_errors: yes
   when: create_email.stdout_lines[-1] != '(1 row)'
