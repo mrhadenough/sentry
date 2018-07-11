@@ -1,4 +1,4 @@
-- stat: path=/www/sentry/.env
+- stat: path=/swapfile
   register: check_swap_file
 
 - include: swap.yml

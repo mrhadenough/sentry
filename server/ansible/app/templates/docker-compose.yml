@@ -7,8 +7,8 @@ services:
   postgres:
     image: postgres:10.4-alpine
     environment:
-      - POSTGRES_USER:sentry
-      - POSTGRES_PASSWORD:sentry
+      - POSTGRES_USER:${POSTGRES_USER}
+      - POSTGRES_PASSWORD:${POSTGRES_PASSWORD}
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
 
@@ -19,11 +19,9 @@ services:
     environment:
       SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
       SENTRY_POSTGRES_HOST: postgres
-      SENTRY_DB_USER: postgres
-      SENTRY_DB_PASSWORD: postgres
+      SENTRY_DB_USER: ${POSTGRES_USER}
+      SENTRY_DB_PASSWORD: ${POSTGRES_PASSWORD}
       SENTRY_REDIS_HOST: redis
-      # SENTRY_EMAIL_HOST: mailserver
-      # SENTRY_SERVER_EMAIL: postmaster@sentry.com
     env_file:
       - .env
     links:
@@ -45,11 +43,9 @@ services:
     environment:
       SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
       SENTRY_POSTGRES_HOST: postgres
-      SENTRY_DB_USER: postgres
-      SENTRY_DB_PASSWORD: postgres
+      SENTRY_DB_USER: ${POSTGRES_USER}
+      SENTRY_DB_PASSWORD: ${POSTGRES_PASSWORD}
       SENTRY_REDIS_HOST: redis
-      SENTRY_EMAIL_HOST: mailserver
-      SENTRY_SERVER_EMAIL: postmaster@sentry.com
     env_file:
       - .env
 
@@ -63,11 +59,9 @@ services:
     environment:
       SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
       SENTRY_POSTGRES_HOST: postgres
-      SENTRY_DB_USER: postgres
-      SENTRY_DB_PASSWORD: postgres
+      SENTRY_DB_USER: ${POSTGRES_USER}
+      SENTRY_DB_PASSWORD: ${POSTGRES_PASSWORD}
       SENTRY_REDIS_HOST: redis
-      SENTRY_EMAIL_HOST: mailserver
-      SENTRY_SERVER_EMAIL: postmaster@sentry.com
     env_file:
       - .env
 

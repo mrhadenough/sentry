@@ -1,7 +1,3 @@
-- name: add user mod
-  become_user: sudo
-  command: usermod -aG docker root
-
 - name: ensure repository key is installed
   apt_key:
     id: "58118E89F3A912897C070ADBF76221572C52609D"
@@ -21,5 +17,11 @@
     - docker-engine
     - docker-compose
     - python-passlib
+
+
+- name: add user mod
+  become_user: sudo
+  command: usermod -aG docker root
+
 
 - service: name=docker state=restarted

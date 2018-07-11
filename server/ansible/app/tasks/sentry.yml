@@ -4,8 +4,8 @@
 - name: copy docker compose
   template: src=docker-compose.yml dest=/www/sentry/docker-compose.yml
 
-- stat: path=/www/sentry/.env
-  register: check_env_file
+- name: copy docker compose
+  template: src=.env.j2 dest=/www/sentry/.env
 
 - name: Generate secret key
   shell: docker run --rm sentry config generate-secret-key
@@ -13,14 +13,12 @@
     chdir: /www/sentry/
   register: secret_key
   run_once: true
-  when: check_env_file.stat.exists == False
 
 - name: Write secret key to env
-  shell: echo SENTRY_SECRET_KEY={{ secret_key.stdout | quote }} > .env
-  args:
-    chdir: /www/sentry
-  run_once: true
-  when: check_env_file.stat.exists == False
+  replace:
+    path: /www/sentry/.env
+    regexp: "^SENTRY_SECRET_KEY=$"
+    replace: "SENTRY_SECRET_KEY={{ secret_key.stdout }}"
 
 - name: Stop compose
   docker_service:
@@ -33,7 +31,8 @@
   args:
     chdir: /www/sentry
   run_once: true
-  register: output
+  retries: 10
+  delay: 1
 
 - name: Run compose
   docker_service:
@@ -51,7 +50,9 @@
 - debug: msg="{{ output.stdout.split('\n') }}"
 
 - name: Check if user exists
-  shell: docker exec -i sentry_postgres_1 psql -U postgres -c "select email from auth_user where email = '{{ sentry_user_email }}'"
+  shell: docker exec -i sentry_postgres_1 psql -U {{ postgres_user }} -c "select email from auth_user where email = '{{ sentry_user_email }}'"
+  args:
+    chdir: /www/sentry
   register: create_email
 
 - debug: msg="{{ create_email.stdout | quote }}"
