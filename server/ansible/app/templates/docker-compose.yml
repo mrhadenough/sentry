@@ -27,7 +27,7 @@ services:
     links:
      - redis
      - postgres
-     - mailserver
+    #  - mailserver
     ports:
      - 127.0.0.1:9000:9000
     stdin_open: true
@@ -38,7 +38,7 @@ services:
     depends_on:
      - redis
      - postgres
-     - mailserver
+    #  - mailserver
     command: "sentry run cron"
     environment:
       SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
@@ -54,7 +54,7 @@ services:
     depends_on:
      - redis
      - postgres
-     - mailserver
+    #  - mailserver
     command: "sentry run worker"
     environment:
       SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
@@ -64,6 +64,8 @@ services:
       SENTRY_REDIS_HOST: redis
     env_file:
       - .env
-
-  mailserver:
-    image: namshi/smtp
+# ? disabled because right now self-hosted emails are blocked or going to spam
+  # mailserver:
+  #   image: namshi/smtp
+  #   env_file:
+  #     - .env
